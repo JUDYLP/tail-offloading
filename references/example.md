@@ -26,7 +26,7 @@ A Markdown table with source paths and line references.
 
 Success evidence:
 Every YAML file under .github/workflows/ appears exactly once, and every
-${{ secrets.NAME }} reference found by a repository search appears in the table.
+${{ secrets.NAME }} reference in those workflow files appears in the table.
 
 On failure:
 Return the exact error, attempted command, partial results, likely failure class,
@@ -45,7 +45,7 @@ Attempt 1
 
 Attempt 2
 - Approach: enumerate files through the platform API and inspect each result
-- Observable result: inventory and secret-reference search both pass
+- Observable result: inventory and workflow-scoped secret-reference search both pass
 - Failure class: none
 - New evidence: all five workflow files and three secret references are accounted for
 - Next change: return the verified table

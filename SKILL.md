@@ -53,7 +53,7 @@ are explicit.
 
 When two or more work units are independent, run them concurrently within the environment's agent limit. Serialize overlapping edits and dependent steps.
 
-For copy-ready contracts and escalation reports, read [references/contracts.md](references/contracts.md).
+For copy-ready contracts and escalation reports, read [references/contracts.md](references/contracts.md). For a worked routing example, read [references/example.md](references/example.md).
 
 ## Apply the five-attempt policy
 

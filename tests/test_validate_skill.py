@@ -18,7 +18,6 @@ name: tail-offloading
 description: value containing --- characters
 # no closing delimiter
 ## Body
----
 """
         with self.assertRaisesRegex(ValueError, "frontmatter is not closed"):
             validate_skill.parse_frontmatter(malformed)

@@ -60,6 +60,15 @@ python3 scripts/validate_skill.py
 
 The check validates SKILL.md frontmatter, the skill directory name, and referenced Markdown files. GitHub Actions runs the same check on pull requests and pushes to the default branch.
 
+After changing packaged files, rebuild the distribution ZIP and check it:
+
+```bash
+python3 scripts/build_package.py
+python3 scripts/build_package.py --check
+```
+
+The package contains SKILL.md, both READMEs, LICENSE, and the two Markdown references under `tail-offloading/`. CI rejects missing, extra, or changed package contents. Build and validation scripts remain in the source repository.
+
 ## Related work
 
 This skill belongs to an active family of model-routing and subagent-orchestration projects. It is provider-neutral and centers a portable work contract plus an evidence-bearing attempt ceiling.

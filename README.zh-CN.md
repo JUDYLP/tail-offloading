@@ -68,6 +68,15 @@ python3 scripts/validate_skill.py
 
 该检查会验证 SKILL.md 的 frontmatter、目录名称以及 Markdown 引用是否完整。GitHub Actions 也会在 Pull Request 和推送到主分支时自动执行。
 
+修改分发文件后，重新生成 ZIP 并检查：
+
+```bash
+python3 scripts/build_package.py
+python3 scripts/build_package.py --check
+```
+
+分发包在 `tail-offloading/` 下包含 SKILL.md、中英文 README、LICENSE 和两份 Markdown 引用。CI 会拒绝缺失、多余或内容与源码不一致的文件。构建和校验脚本保留在源码仓库中。
+
 ## 相关项目
 
 本 Skill 属于模型路由和子代理编排方向，采用与模型供应商无关的工作契约和有证据的失败次数上限。

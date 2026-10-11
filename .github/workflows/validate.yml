@@ -18,3 +18,5 @@ jobs:
         run: python3 -m unittest discover -s tests -v
       - name: Validate skill structure
         run: python3 scripts/validate_skill.py
+      - name: Check distribution package
+        run: python3 scripts/build_package.py --check

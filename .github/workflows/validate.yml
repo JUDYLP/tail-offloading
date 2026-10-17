@@ -20,3 +20,25 @@ jobs:
         run: python3 scripts/validate_skill.py
       - name: Check distribution package
         run: python3 scripts/build_package.py --check
+
+  discover-installed-skill:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned Codex CLI
+        run: npm install --global @openai/codex@0.159.2
+      - name: Discover the installed distribution (no model or credentials)
+        run: python3 scripts/smoke_skill.py --output-dir smoke-results/ci
+      - name: Retain discovery evidence (does not prove live invocation)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: installed-skill-discovery
+          path: smoke-results/ci/
+          if-no-files-found: error
+          retention-days: 7

@@ -69,6 +69,62 @@ python3 scripts/build_package.py --check
 
 The package contains SKILL.md, both READMEs, LICENSE, and the two Markdown references under `tail-offloading/`. CI rejects missing, extra, or changed package contents. Build and validation scripts remain in the source repository.
 
+## Installed-skill smoke test
+
+Run from a source checkout on Linux, macOS, or WSL with Python 3.10+ and the
+Codex CLI installed. CI pins `@openai/codex@0.159.2`; `--codex /path/to/codex`
+selects another local executable, and each report records its version.
+
+```bash
+# Real Codex discovery, no login or model call required.
+python3 scripts/smoke_skill.py
+
+# One real model call using an explicitly selected local Codex login.
+python3 scripts/smoke_skill.py --live --auth-file "${CODEX_HOME:-$HOME/.codex}/auth.json"
+```
+
+Alternatively, `--live` accepts an existing `CODEX_API_KEY` environment variable.
+The isolated run uses the CLI's default model; pass `--model <available-model>`
+if needed. It does not copy your model/provider configuration. Live runs consume
+model quota and have a 180-second timeout, configurable with `--timeout`.
+
+The script checks the committed ZIP against source, extracts it into a temporary
+`CODEX_HOME/skills/tail-offloading/`, and starts a fresh Codex process in a separate
+empty directory. It never installs into your real skills directory. Discovery uses
+the actual app-server `skills/list` endpoint and requires exactly one enabled
+user skill with the expected name, installation path, and description, with no
+discovery errors. This tests the README's `.codex/skills` layout on the recorded
+CLI version; it does not claim support for every Codex release or desktop UI.
+
+With `--live`, a new `codex exec` process receives `Use $tail-offloading ...`,
+without the skill body or installation path in the prompt. The test requires:
+
+- A successful turn and successful shell reads of the installed `SKILL.md` and
+  its contract reference, including their contents in the JSONL trace.
+- The skill's default attempt budget (2) and failure ceiling (5) in the result.
+- The correct nonce and sum from a fresh random input file, checked independently.
+- No changes to the fixture or installed skill. Commands run in a read-only
+  sandbox with approvals disabled; the tiny task uses the skill's direct path.
+
+This is an installation/explicit-invocation smoke test. It does not evaluate
+delegation, escalation quality, cost savings, or automatic skill selection.
+
+Evidence goes to a new ignored `smoke-results/<run-id>/` directory: `report.json`,
+discovery metadata and, for live runs, the prompt, fixture, JSONL trace, stderr,
+and final JSON. `--output-dir <new-directory>` selects a different location.
+The temporary Codex state (including any explicitly copied auth file) is deleted;
+credentials are never included in evidence. Do not upload your Codex home.
+
+CI runs unit tests, structural/package checks, and **real discovery only**, on
+pull requests, main pushes, and manual workflow dispatch. It uploads discovery
+evidence without credentials or model cost. `invocation` and `e2e` remain
+`not_run`; a green CI run is not a live E2E pass. Run `--live` locally with an
+authorized login to obtain that evidence. Missing credentials or any failed
+assertion exits nonzero; no mock result or skipped live run counts as success.
+
+Protocol references: [Codex app-server skills](https://developers.openai.com/codex/app-server#skills)
+and [non-interactive mode](https://developers.openai.com/codex/noninteractive).
+
 ## Related work
 
 This skill belongs to an active family of model-routing and subagent-orchestration projects. It is provider-neutral and centers a portable work contract plus an evidence-bearing attempt ceiling.
